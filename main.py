@@ -6,7 +6,10 @@ Writes one short poem about agency ("Go", angle P2 "Say the Word")
 to /output/entry.txt. No network, no input, deterministic.
 """
 
-import os
+from pathlib import Path
+
+DEFAULT_OUTPUT_DIR = "/output"
+ENTRY_FILENAME = "entry.txt"
 
 POEM = (
     "I held the question all morning like a stone in my shoe,\n"
@@ -19,11 +22,19 @@ POEM = (
 )
 
 
-def main(out_dir="/output"):
-    os.makedirs(out_dir, exist_ok=True)
-    path = os.path.join(out_dir, "entry.txt")
-    with open(path, "w", encoding="utf-8", newline="") as f:
+def main(out_dir=DEFAULT_OUTPUT_DIR):
+    """Write POEM to ``<out_dir>/entry.txt`` and return that path.
+
+    The file is opened with an explicit UTF-8 encoding and
+    ``newline=""`` so the bytes on disk are exactly the bytes of
+    POEM on every platform, with no newline translation.
+    """
+    output_dir = Path(out_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    path = output_dir / ENTRY_FILENAME
+    with path.open("w", encoding="utf-8", newline="") as f:
         f.write(POEM)
+    return path
 
 
 if __name__ == "__main__":
